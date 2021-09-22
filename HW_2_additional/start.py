@@ -80,7 +80,7 @@ if __name__ == "__main__":
         while True:
             options = input(
                 "Please enter a number to make your choice:\nBegin - 1\nSee past words - 2\nExit - 3\nYour choice is ")
-            if options == "1":  # it should probably be done as a function
+            if options == "1":  
                 files_tool.create_file_hidden_words()
                 hidden_word_1 = files_tool.take_unknown_word()
                 print("hidden_word_1 = ", hidden_word_1)
