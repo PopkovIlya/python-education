@@ -1,0 +1,55 @@
+Задание 1
+Вывести:
+1. всех юзеров:
+SELECT * FROM users;
+SELECT first_name ||' '||middle_name ||' '|| last_name AS user FROM users;
+
+2. все продукты:
+SELECT * FROM products;
+SELECT product_title FROM products;
+
+3. все статусы заказов:
+SELECT * FROM order_status;
+SELECT status_name FROM order_status;
+
+
+Задание 2
+Вывести заказы, которые успешно доставлены и оплачены:
+SELECT * FROM "order" WHERE order_status_order_status_id IN (SELECT order_status_id FROM order_status WHERE status_name IN ('Accepted', 'Paid'));
+
+SELECT * FROM "order" JOIN order_status ON "order".order_status_order_status_id = 
+(WHERE order_status_order_status_id IN (SELECT order_status_id FROM order_status WHERE status_name IN ('Accepted', 'Paid'));
+
+Задание 3
+Вывести:
+(если задание можно решить несколькими способами, указывай все)
+
+1. Продукты, цена которых больше 80.00 и меньше или равно 150.00
+SELECT * FROM products WHERE (80.00 < price AND price <= 150.00);
+
+2. заказы совершенные после 01.10.2020 (поле created_at)
+SELECT * FROM "order" WHERE created_at > '2020-10-01';
+
+3. заказы полученные за первое полугодие 2020 года
+SELECT * FROM "order" WHERE created_at BETWEEN '2020-01-01' AND '2020-06-30';
+
+SELECT * FROM "order" WHERE created_at >= '2020-01-01' AND created_at <= '2020-06-30';
+
+4. подукты следующих категорий Category 7, Category 11, Category 18
+SELECT * FROM products WHERE category_id IN (SELECT category_id FROM categories WHERE category_title IN ('Category 7', 'Category 11', 'Category 18'));
+
+5. незавершенные заказы по состоянию на 31.12.2020
+SELECT * FROM "order" WHERE order_status_order_status_id IN (SELECT order_status_id FROM order_status WHERE status_name = 'In progress');
+
+6.Вывести все корзины, которые были созданы, но заказ так и не был оформле 
+SELECT * FROM carts WHERE cart_id IN (SELECT carts_cart_id FROM "order" WHERE order_status_order_status_id IN (SELECT order_status_id FROM order_status WHERE status_name = 'Canceled'));
+
+
+Задание 4
+Вывести:
+1. среднюю сумму всех завершенных сделок
+SELECT AVG(total) FROM "order" WHERE order_status_order_status_id = (SELECT order_status_id FROM order_status WHERE status_name = 'Finished');
+
+2. вывести максимальную сумму сделки за 3 квартал 2020
+SELECT MAX(total) FROM "order" WHERE created_at BETWEEN '2020-07-01' AND '2020-09-30';
+
