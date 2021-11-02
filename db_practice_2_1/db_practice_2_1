@@ -1,0 +1,124 @@
+Задание 1
+
+1. создать бд,
+CREATE DATABASE example;
+
+
+2. создать таблицы,
+CREATE TABLE IF NOT EXISTS Order_status (
+      order_status_id INT NOT NULL PRIMARY KEY,
+      status_name VARCHAR(255)
+   );
+
+CREATE TABLE IF NOT EXISTS "Order" (
+      order_id INT NOT NULL PRIMARY KEY,
+      Carts_cart_id INT,
+      Order_status_order_status_id INT,
+      shipping_total DECIMAL,
+	  total DECIMAL,
+      created_at TIMESTAMP(2),
+      updated_at TIMESTAMP(2)
+   );
+   
+CREATE TABLE IF NOT EXISTS Users (
+      user_id INT NOT NULL PRIMARY KEY,
+      email VARCHAR(255),
+      password VARCHAR(255),
+      first_name VARCHAR(255),
+      last_name VARCHAR(255),
+      middle_name VARCHAR(255),
+      is_staff SMALLINT,
+      country VARCHAR(255),
+      city VARCHAR(255),
+      address TEXT
+   );
+
+CREATE TABLE IF NOT EXISTS Carts (
+	cart_id INT NOT NULL PRIMARY KEY,
+	Users_user_id INT,
+	subtotal DECIMAL,
+	total DECIMAL,
+	timestamp TIMESTAMP(2)
+   );
+  
+CREATE TABLE IF NOT EXISTS Cart_product (
+	cart_product_id SERIAL,
+	carts_cart_id INT,
+	products_product_id INT,
+	PRIMARY KEY(cart_product_id)
+   );
+ 
+CREATE TABLE IF NOT EXISTS Products (
+	product_id INT NOT NULL PRIMARY KEY,
+	product_title VARCHAR(255),
+	product_description TEXT,
+	in_stock INT,
+	price FLOAT,
+	slug VARCHAR(45),
+	category_id INT
+   );
+
+CREATE TABLE IF NOT EXISTS Categories (
+	category_id INT NOT NULL PRIMARY KEY,
+	category_title VARCHAR(255),
+	category_description TEXT
+   );
+
+
+3. добавить связи между таблицами
+ALTER TABLE "Order" ADD FOREIGN KEY (Order_status_order_status_id) REFERENCES Order_status(order_status_id);
+ALTER TABLE "Order" ADD FOREIGN KEY (Carts_cart_id) REFERENCES Carts(cart_id);
+ALTER TABLE carts ADD FOREIGN KEY (Users_user_id) REFERENCES Users(user_id);
+ALTER TABLE Products ADD FOREIGN KEY (category_id) REFERENCES categories(category_id);
+ALTER TABLE cart_product ADD FOREIGN KEY(carts_cart_id) REFERENCES carts(cart_id);
+ALTER TABLE cart_product ADD FOREIGN KEY(products_product_id) REFERENCES Products(product_id);
+
+
+4. заполнить таблицу данными
+COPY Order_status(order_status_id, status_name)
+FROM '/usr/src/data_csv/order_statuses.csv'
+DELIMITER ',';   
+
+COPY Users(user_id, email, password, first_name, last_name, middle_name, is_staff, country, city, address)
+FROM '/usr/src/data_csv/users.csv'
+DELIMITER ',';  
+
+   
+COPY Categories(category_id, category_title, category_description)
+FROM '/usr/src/data_csv/categories.csv'
+DELIMITER ',';
+
+ 
+COPY Carts(cart_id, Users_user_id, subtotal, total, timestamp)
+FROM '/usr/src/data_csv/carts.csv'
+DELIMITER ','; 
+
+COPY Products(product_id, product_title, product_description, in_stock, price, slug, category_id)
+FROM '/usr/src/data_csv/products.csv'
+DELIMITER ',';
+
+COPY "Order"(order_id, Carts_cart_id, Order_status_order_status_id, shipping_total, total, created_at, updated_at)
+FROM '/usr/src/data_csv/orders.csv'
+DELIMITER ',';  
+   
+COPY Cart_product(carts_cart_id, products_product_id)
+FROM '/usr/src/data_csv/cart_products.csv'
+DELIMITER ',';
+
+
+
+Задание 2
+В созданной БД в задании 1:
+
+1. Добавьте в таблицу users колонку phone_number (int):
+ALTER TABLE users ADD phone_number INT;
+
+2. Поменяйте тип данных в таблице users колонка phone_number с int на varchar:
+ALTER TABLE users ALTER COLUMN phone_number TYPE varchar;
+
+
+
+Задание 3
+
+1.В таблице products увеличьте цену в 2 раза:
+UPDATE products SET price = price*2;
