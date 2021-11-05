@@ -1,0 +1,90 @@
+Задание 1
+Создайте новую таблицу potential customers с полями id, email, name, surname, second_name, city
+ 
+   CREATE TABLE IF NOT EXISTS potential_customers (
+	potential_id INT NOT NULL GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+	email VARCHAR(255),
+	name VARCHAR(255),
+	surname VARCHAR(255),
+	second_name VARCHAR(255),
+	city VARCHAR(255)
+   );
+
+
+Заполните данными таблицу.
+INSERT INTO potential_customers (email, name, surname, second_name, city) VALUES
+    ('p_email1@gmail.com', 'p_first_name 1', 'p_surname 1', 'p_second_name 1', 'city 1'),
+    ('p_email2@gmail.com', 'p_first_name 2', 'p_surname 2', 'p_second_name 2', 'city 2'),
+    ('p_email3@gmail.com', 'p_first_name 3', 'p_surname 3', 'p_second_name 1', 'city 3'),
+    ('p_email17@gmail.com', 'p_first_name 17', 'p_surname 17', 'p_second_name 17', 'city 17'),
+    ('p_email18@gmail.com', 'p_first_name 18', 'p_surname 18', 'p_second_name 18', 'city 17');
+    
+Выведите имена и электронную почту потенциальных и существующих пользователей из города city 17 
+SELECT first_name AS name, email FROM users WHERE city = 'city 17' UNION ALL SELECT name, email FROM potential_customers WHERE city = 'city 17';
+
+SELECT first_name||' '||last_name||' '||middle_name AS name, email FROM users WHERE city = 'city 17' UNION ALL SELECT name||' '||surname||' '||second_name AS name, email FROM potential_customers WHERE city = 'city 17';
+
+   
+
+Задание 2
+Вывести имена и электронные адреса всех users отсортированных по городам и по имени (по алфавиту)
+SELECT first_name, email FROM users ORDER BY city, first_name;
+
+
+Задание 3
+Вывести наименование группы товаров, общее количество по группе товаров в порядке убывания количества
+SELECT c.category_title, COUNT(in_stock) AS sum_products FROM products JOIN categories c USING(category_id) GROUP BY c.category_title ORDER BY sum_products DESC
+
+
+Задание 4
+1. Вывести продукты, которые ни разу не попадали в корзину.
+SELECT * FROM products WHERE product_id NOT IN (SELECT  products_product_id FROM cart_product);
+SELECT p.*  FROM products p 
+LEFT JOIN cart_product ON product_id = products_product_id 
+WHERE product_id NOT IN (SELECT  products_product_id FROM cart_product) ORDER BY product_id;
+
+
+2. Вывести все продукты, которые так и не попали ни в 1 заказ. (но в корзину попасть могли).
+SELECT * FROM products WHERE product_id IN (SELECT products_product_id FROM cart_product WHERE carts_cart_id NOT IN (SELECT carts_cart_id FROM "Order"));
+
+
+3. Вывести топ 10 продуктов, которые добавляли в корзины чаще всего.
+SELECT p.*, COUNT(cp.products_product_id) AS sum_added_carts 
+FROM products p 
+JOIN cart_product cp ON p.product_id = cp.products_product_id 
+GROUP BY p.product_id ORDER BY sum_added_carts DESC LIMIT 10;
+
+
+4. Вывести топ 10 продуктов, которые не только добавляли в корзины, но и оформляли заказы чаще всего.
+SELECT product_id, COUNT(ord.carts_cart_id)*CONT(cart_product) AS number_orders 
+FROM products 
+JOIN cart_product ON carts_cart_id = products_product_id 
+JOIN carts ON carts_cart_id = cart_id JOIN "Order" ord
+ON ord.carts_cart_id = cart_id 
+GROUP BY product_id ORDER BY number_orders DESC LIMIT 10;
+
+
+
+5. Вывести топ 5 юзеров, которые потратили больше всего денег (total в заказе).
+SELECT users.*, ord.total FROM users 
+JOIN carts ON user_id = users_user_id 
+JOIN "Order" ord ON cart_id = carts_cart_id 
+ORDER BY ord.total DESC LIMIT 5;
+
+
+6. Вывести топ 5 юзеров, которые сделали больше всего заказов (кол-во заказов).
+SELECT users.*, COUNT(carts.users_user_id)*COUNT(ord.carts_cart_id) AS all_orders FROM users 
+JOIN carts ON user_id = users_user_id 
+JOIN "Order" ord ON cart_id = carts_cart_id 
+GROUP BY user_id ORDER BY all_orders LIMIT 5;
+
+
+7. Вывести топ 5 юзеров, которые создали корзины, но так и не сделали заказы.
+SELECT DISTINCT users.* FROM users 
+JOIN carts ON cart_id = users_user_id 
+AND cart_id NOT IN (SELECT carts_cart_id FROM "Order") LIMIT 5;
+
+
+
+
+
